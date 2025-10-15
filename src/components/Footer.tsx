@@ -25,6 +25,7 @@ export const Footer = () => {
         <div className="space-y-1 text-sm">
           <p><strong>Name:</strong> Kishore Raja P C</p>
           <p><strong>Designation:</strong> Professor Grade 1</p>
+          <p><strong>School:</strong> Zaheer</p>
           <p>
             <strong>Email:</strong>{' '}
             <a
