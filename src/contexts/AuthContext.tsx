@@ -8,6 +8,8 @@ interface AuthContextType {
   isGuest: boolean;
   userName: string | null;
   userPhone: string | null;
+  profilePhoto: string;
+  setProfilePhoto: (photo: string) => void;
   signUp: (email: string, password: string, name: string, phone: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -31,6 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isGuest, setIsGuest] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
   const [userPhone, setUserPhone] = useState<string | null>(null);
+  const [profilePhoto, setProfilePhoto] = useState<string>('');
 
   useEffect(() => {
     // Check if user is in guest mode
@@ -108,7 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isGuest, userName, userPhone, signUp, signIn, signOut, continueAsGuest, resetPassword }}>
+    <AuthContext.Provider value={{ user, session, isGuest, userName, userPhone, profilePhoto, setProfilePhoto, signUp, signIn, signOut, continueAsGuest, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

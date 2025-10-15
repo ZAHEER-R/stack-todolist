@@ -1,7 +1,9 @@
 import { Layers, Moon, Sun, Smartphone, User, X } from 'lucide-react';
 import { Button } from './ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface HeaderProps {
   taskCount: number;
@@ -15,6 +17,14 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ taskCount, theme, onThemeChange, userEmail, userName, userPhone }) => {
   const [showAccountInfo, setShowAccountInfo] = useState(false);
   const navigate = useNavigate();
+  const { profilePhoto } = useAuth();
+
+  const getInitials = () => {
+    if (userName) {
+      return userName.split(' ').map(n => n[0]).join('').toUpperCase();
+    }
+    return userEmail?.[0].toUpperCase() || 'U';
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-md border-b border-border">
@@ -65,9 +75,18 @@ export const Header: React.FC<HeaderProps> = ({ taskCount, theme, onThemeChange,
                   variant="ghost"
                   size="icon"
                   onClick={() => setShowAccountInfo(!showAccountInfo)}
-                  className="h-8 w-8"
+                  className="h-10 w-10 p-0 rounded-full overflow-hidden"
                 >
-                  <User className="h-4 w-4" />
+                  {profilePhoto ? (
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={profilePhoto} alt={userName || 'User'} />
+                      <AvatarFallback className="text-sm bg-primary/10 text-primary">
+                        {getInitials()}
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <User className="h-5 w-5" />
+                  )}
                 </Button>
                 {showAccountInfo && (
                   <div className="absolute right-0 top-full mt-2 w-64 bg-card border border-border rounded-lg shadow-lg p-4 z-50">

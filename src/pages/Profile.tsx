@@ -8,10 +8,8 @@ import { ArrowLeft, User, Camera } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Profile = () => {
-  const { user, userName, userPhone } = useAuth();
+  const { user, userName, userPhone, profilePhoto, setProfilePhoto } = useAuth();
   const navigate = useNavigate();
-  const [profilePhoto, setProfilePhoto] = useState<string>('');
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -69,9 +67,9 @@ const Profile = () => {
             <div className="space-y-6">
               <div className="flex flex-col items-center gap-4 pb-6 border-b">
                 <div className="relative">
-                  <Avatar className="h-32 w-32">
+                  <Avatar className="h-40 w-40">
                     <AvatarImage src={profilePhoto} alt={userName || 'User'} />
-                    <AvatarFallback className="text-3xl bg-primary/10 text-primary">
+                    <AvatarFallback className="text-4xl bg-primary/10 text-primary">
                       {getInitials()}
                     </AvatarFallback>
                   </Avatar>
