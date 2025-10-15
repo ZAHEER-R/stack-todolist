@@ -10,6 +10,7 @@ const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const { signUp, signIn, continueAsGuest } = useAuth();
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const Auth = () => {
 
     try {
       const { error } = isSignUp
-        ? await signUp(email, password)
+        ? await signUp(email, password, name)
         : await signIn(email, password);
 
       if (error) {
@@ -51,7 +52,7 @@ const Auth = () => {
               <Layers className="h-10 w-10 text-primary" />
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mb-2">
-              Stack Snap Tasks
+              Stack To-Do Tasks
             </h1>
             <p className="text-muted-foreground text-center">
               Manage your tasks with stack operations
@@ -59,6 +60,19 @@ const Auth = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4 mb-4">
+            {isSignUp && (
+              <div>
+                <label className="block text-sm font-medium mb-2">Name</label>
+                <Input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your Name"
+                  required
+                />
+              </div>
+            )}
+            
             <div>
               <label className="block text-sm font-medium mb-2">Email</label>
               <Input

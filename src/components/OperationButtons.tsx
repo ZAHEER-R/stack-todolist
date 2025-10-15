@@ -49,9 +49,9 @@ export const OperationButtons: React.FC<OperationButtonsProps> = ({
               opacity: op.disabled ? 0.5 : 1,
             }}
           >
-            <Icon className="h-4 w-4 md:h-5 md:w-5 text-white" />
-            <span className="text-xs font-medium text-white">{op.label}</span>
-            <span className="text-[10px] text-white/80">{op.subtext}</span>
+            <Icon className="h-4 w-4 md:h-5 md:w-5 text-white dark:text-white" />
+            <span className="text-xs font-medium text-black dark:text-white">{op.label}</span>
+            <span className="text-[10px] text-black/70 dark:text-white/80">{op.subtext}</span>
           </Button>
         );
       })}

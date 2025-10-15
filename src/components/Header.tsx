@@ -1,13 +1,18 @@
-import { Layers, Moon, Sun, Smartphone } from 'lucide-react';
+import { Layers, Moon, Sun, Smartphone, User, X } from 'lucide-react';
 import { Button } from './ui/button';
+import { useState } from 'react';
 
 interface HeaderProps {
   taskCount: number;
   theme: 'light' | 'dark' | 'mobile';
   onThemeChange: (theme: 'light' | 'dark' | 'mobile') => void;
+  userEmail?: string;
+  userName?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ taskCount, theme, onThemeChange }) => {
+export const Header: React.FC<HeaderProps> = ({ taskCount, theme, onThemeChange, userEmail, userName }) => {
+  const [showAccountInfo, setShowAccountInfo] = useState(false);
+
   return (
     <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 py-4">
@@ -17,7 +22,7 @@ export const Header: React.FC<HeaderProps> = ({ taskCount, theme, onThemeChange 
               <Layers className="h-6 w-6 text-primary" />
             </div>
             <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              Stack Snap Tasks
+              Stack To-Do Tasks
             </h1>
           </div>
 
@@ -51,6 +56,45 @@ export const Header: React.FC<HeaderProps> = ({ taskCount, theme, onThemeChange 
                 <Smartphone className="h-4 w-4" />
               </Button>
             </div>
+            {(userEmail || userName) && (
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowAccountInfo(!showAccountInfo)}
+                  className="h-8 w-8"
+                >
+                  <User className="h-4 w-4" />
+                </Button>
+                {showAccountInfo && (
+                  <div className="absolute right-0 top-full mt-2 w-64 bg-card border border-border rounded-lg shadow-lg p-4 z-50">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="font-semibold text-sm">Account Information</h3>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setShowAccountInfo(false)}
+                        className="h-6 w-6 -mt-1 -mr-1"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {userName && (
+                      <div className="mb-2">
+                        <span className="text-xs text-muted-foreground">Name</span>
+                        <p className="text-sm font-medium">{userName}</p>
+                      </div>
+                    )}
+                    {userEmail && (
+                      <div>
+                        <span className="text-xs text-muted-foreground">Email</span>
+                        <p className="text-sm font-medium break-all">{userEmail}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

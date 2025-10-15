@@ -15,7 +15,7 @@ import { playSound } from '@/lib/sounds';
 import { toast } from 'sonner';
 
 const TaskManager = () => {
-  const { user, isGuest, signOut } = useAuth();
+  const { user, isGuest, userName, signOut } = useAuth();
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [undoStack, setUndoStack] = useState<any[]>([]);
@@ -34,7 +34,12 @@ const TaskManager = () => {
   }, [user, isGuest, navigate]);
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
+    if (theme === 'mobile') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.toggle('dark', prefersDark);
+    } else {
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+    }
   }, [theme]);
 
   const loadTasks = async () => {
@@ -257,7 +262,13 @@ const TaskManager = () => {
         <div className="absolute top-0 bottom-0 right-0 w-1 animated-border"></div>
       </div>
 
-      <Header taskCount={tasks.length} theme={theme} onThemeChange={setTheme} />
+      <Header 
+        taskCount={tasks.length} 
+        theme={theme} 
+        onThemeChange={setTheme} 
+        userEmail={user?.email}
+        userName={userName || undefined}
+      />
 
       <main className="container mx-auto px-4 py-6 max-w-4xl">
         <OperationButtons
