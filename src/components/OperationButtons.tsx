@@ -25,17 +25,17 @@ export const OperationButtons: React.FC<OperationButtonsProps> = ({
   canRedo,
 }) => {
   const operations = [
-    { icon: Plus, label: 'Push', subtext: 'add', onClick: onPush, color: 'hsl(var(--op-push))' },
-    { icon: Trash2, label: 'Pop', subtext: 'remove', onClick: onPop, color: 'hsl(var(--op-pop))' },
-    { icon: Eye, label: 'Peek', subtext: 'current', onClick: onPeek, color: 'hsl(var(--op-peek))' },
-    { icon: Undo2, label: 'Undo', subtext: 'operation', onClick: onUndo, color: 'hsl(var(--op-undo))', disabled: !canUndo },
-    { icon: Redo2, label: 'Redo', subtext: 'operation', onClick: onRedo, color: 'hsl(var(--op-redo))', disabled: !canRedo },
-    { icon: List, label: 'Iterate', subtext: 'view all', onClick: onIterate, color: 'hsl(var(--op-iterate))' },
-    { icon: RotateCcw, label: 'Reset', subtext: 'clear', onClick: onClear, color: 'hsl(var(--op-clear))' },
+    { icon: Plus, label: 'Push', subtext: 'add', onClick: onPush, color: '#E8F5E9' },
+    { icon: Trash2, label: 'Pop', subtext: 'remove', onClick: onPop, color: '#FFEBEE' },
+    { icon: Eye, label: 'Peek', subtext: 'current', onClick: onPeek, color: '#E3F2FD' },
+    { icon: Undo2, label: 'Undo', subtext: 'operation', onClick: onUndo, color: '#FFF3E0', disabled: !canUndo },
+    { icon: Redo2, label: 'Redo', subtext: 'operation', onClick: onRedo, color: '#F3E5F5', disabled: !canRedo },
+    { icon: List, label: 'Iterate', subtext: 'view all', onClick: onIterate, color: '#E0F2F1' },
+    { icon: RotateCcw, label: 'Reset', subtext: 'clear', onClick: onClear, color: '#FFF9C4' },
   ];
 
   return (
-    <div className="flex flex-wrap gap-2 md:gap-3 justify-center p-4">
+    <div className="grid grid-cols-4 gap-3 md:gap-4 p-4 max-w-4xl mx-auto">
       {operations.map((op) => {
         const Icon = op.icon;
         return (
@@ -43,15 +43,15 @@ export const OperationButtons: React.FC<OperationButtonsProps> = ({
             key={op.label}
             onClick={op.onClick}
             disabled={op.disabled}
-            className="flex flex-col items-center gap-1 px-3 py-2 h-auto glow-soft transition-all hover:scale-105"
+            className="flex flex-col items-center gap-2 px-4 py-4 h-auto glow-soft transition-all hover:scale-105 hover:shadow-lg"
             style={{
-              background: `linear-gradient(135deg, ${op.color} 0%, ${op.color}dd 100%)`,
+              backgroundColor: op.color,
               opacity: op.disabled ? 0.5 : 1,
             }}
           >
-            <Icon className="h-4 w-4 md:h-5 md:w-5 text-white dark:text-white" />
-            <span className="text-xs font-medium text-black dark:text-white">{op.label}</span>
-            <span className="text-[10px] text-black/70 dark:text-white/80">{op.subtext}</span>
+            <Icon className="h-6 w-6 md:h-7 md:w-7 text-gray-800 dark:text-white" />
+            <span className="text-sm font-semibold text-gray-800 dark:text-white">{op.label}</span>
+            <span className="text-xs text-gray-600 dark:text-gray-300">{op.subtext}</span>
           </Button>
         );
       })}
