@@ -21,8 +21,8 @@ export const Header: React.FC<HeaderProps> = ({ taskCount, theme, onThemeChange,
             <div className="p-2 bg-primary/10 rounded-lg">
               <Layers className="h-6 w-6 text-primary" />
             </div>
-            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              Stack To-Do Tasks
+            <h1 className="text-base md:text-xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent whitespace-nowrap">
+              Stack To-Do List
             </h1>
           </div>
 
