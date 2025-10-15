@@ -8,9 +8,10 @@ interface HeaderProps {
   onThemeChange: (theme: 'light' | 'dark' | 'mobile') => void;
   userEmail?: string;
   userName?: string;
+  userPhone?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ taskCount, theme, onThemeChange, userEmail, userName }) => {
+export const Header: React.FC<HeaderProps> = ({ taskCount, theme, onThemeChange, userEmail, userName, userPhone }) => {
   const [showAccountInfo, setShowAccountInfo] = useState(false);
 
   return (
@@ -86,9 +87,15 @@ export const Header: React.FC<HeaderProps> = ({ taskCount, theme, onThemeChange,
                       </div>
                     )}
                     {userEmail && (
-                      <div>
+                      <div className="mb-2">
                         <span className="text-xs text-muted-foreground">Email</span>
                         <p className="text-sm font-medium break-all">{userEmail}</p>
+                      </div>
+                    )}
+                    {userPhone && (
+                      <div>
+                        <span className="text-xs text-muted-foreground">Phone</span>
+                        <p className="text-sm font-medium">{userPhone}</p>
                       </div>
                     )}
                   </div>

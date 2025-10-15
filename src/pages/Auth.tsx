@@ -8,11 +8,13 @@ import { toast } from 'sonner';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signUp, signIn, continueAsGuest } = useAuth();
+  const { signUp, signIn, continueAsGuest, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,15 +22,26 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const { error } = isSignUp
-        ? await signUp(email, password, name)
-        : await signIn(email, password);
-
-      if (error) {
-        toast.error(error.message);
+      if (isForgotPassword) {
+        const { error } = await resetPassword(email);
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success('Password reset email sent! Check your inbox.');
+          setIsForgotPassword(false);
+          setEmail('');
+        }
       } else {
-        toast.success(isSignUp ? 'Account created successfully!' : 'Signed in successfully!');
-        navigate('/');
+        const { error } = isSignUp
+          ? await signUp(email, password, name, phone)
+          : await signIn(email, password);
+
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success(isSignUp ? 'Account created successfully!' : 'Signed in successfully!');
+          navigate('/');
+        }
       }
     } catch (error) {
       toast.error('An error occurred. Please try again.');
@@ -52,25 +65,37 @@ const Auth = () => {
               <Layers className="h-10 w-10 text-primary" />
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mb-2">
-              Stack To-Do Tasks
+              Stack To-Do List
             </h1>
             <p className="text-muted-foreground text-center">
-              Manage your tasks with stack operations
+              {isForgotPassword ? 'Reset your password' : 'Manage your tasks with stack operations'}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4 mb-4">
             {isSignUp && (
-              <div>
-                <label className="block text-sm font-medium mb-2">Name</label>
-                <Input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your Name"
-                  required
-                />
-              </div>
+              <>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Name</label>
+                  <Input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your Name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Phone Number</label>
+                  <Input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+1234567890"
+                    required
+                  />
+                </div>
+              </>
             )}
             
             <div>
@@ -84,39 +109,57 @@ const Auth = () => {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Password</label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-              />
-            </div>
+            {!isForgotPassword && (
+              <div>
+                <label className="block text-sm font-medium mb-2">Password</label>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+            )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}
+              {loading ? 'Loading...' : isForgotPassword ? 'Send Reset Email' : isSignUp ? 'Sign Up' : 'Sign In'}
             </Button>
           </form>
 
           <div className="space-y-3">
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={() => setIsSignUp(!isSignUp)}
-            >
-              {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
-            </Button>
+            {!isForgotPassword && (
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setIsSignUp(!isSignUp)}
+                >
+                  {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full"
+                  onClick={handleGuest}
+                >
+                  Continue as Guest (Sign in later)
+                </Button>
+              </>
+            )}
 
             <Button
               type="button"
               variant="ghost"
-              className="w-full"
-              onClick={handleGuest}
+              className="w-full text-sm"
+              onClick={() => {
+                setIsForgotPassword(!isForgotPassword);
+                setPassword('');
+              }}
             >
-              Continue as Guest (Sign in later)
+              {isForgotPassword ? 'Back to Sign In' : 'Forgot Password?'}
             </Button>
           </div>
         </div>

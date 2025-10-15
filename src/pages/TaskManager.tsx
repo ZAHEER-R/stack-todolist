@@ -15,7 +15,7 @@ import { playSound } from '@/lib/sounds';
 import { toast } from 'sonner';
 
 const TaskManager = () => {
-  const { user, isGuest, userName, signOut } = useAuth();
+  const { user, isGuest, userName, userPhone, signOut } = useAuth();
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [undoStack, setUndoStack] = useState<any[]>([]);
@@ -37,6 +37,15 @@ const TaskManager = () => {
     if (theme === 'mobile') {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       document.documentElement.classList.toggle('dark', prefersDark);
+      
+      // Listen for system theme changes
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = (e: MediaQueryListEvent) => {
+        document.documentElement.classList.toggle('dark', e.matches);
+      };
+      
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
     } else {
       document.documentElement.classList.toggle('dark', theme === 'dark');
     }
@@ -268,6 +277,7 @@ const TaskManager = () => {
         onThemeChange={setTheme} 
         userEmail={user?.email}
         userName={userName || undefined}
+        userPhone={userPhone || undefined}
       />
 
       <main className="container mx-auto px-4 py-6 max-w-4xl">

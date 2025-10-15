@@ -7,10 +7,12 @@ interface AuthContextType {
   session: Session | null;
   isGuest: boolean;
   userName: string | null;
-  signUp: (email: string, password: string, name: string) => Promise<{ error: any }>;
+  userPhone: string | null;
+  signUp: (email: string, password: string, name: string, phone: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   continueAsGuest: () => void;
+  resetPassword: (email: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [isGuest, setIsGuest] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
+  const [userPhone, setUserPhone] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if user is in guest mode
@@ -42,6 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user ?? null);
         setUserName(session?.user?.user_metadata?.name ?? null);
+        setUserPhone(session?.user?.user_metadata?.phone ?? null);
         if (session?.user) {
           setIsGuest(false);
           localStorage.removeItem('guestMode');
@@ -54,12 +58,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
       setUser(session?.user ?? null);
       setUserName(session?.user?.user_metadata?.name ?? null);
+      setUserPhone(session?.user?.user_metadata?.phone ?? null);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, name: string) => {
+  const signUp = async (email: string, password: string, name: string, phone: string) => {
     const redirectUrl = `${window.location.origin}/`;
     const { error } = await supabase.auth.signUp({
       email,
@@ -67,7 +72,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       options: {
         emailRedirectTo: redirectUrl,
         data: {
-          name: name
+          name: name,
+          phone: phone
         }
       }
     });
@@ -93,8 +99,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('guestMode', 'true');
   };
 
+  const resetPassword = async (email: string) => {
+    const redirectUrl = `${window.location.origin}/`;
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectUrl
+    });
+    return { error };
+  };
+
   return (
-    <AuthContext.Provider value={{ user, session, isGuest, userName, signUp, signIn, signOut, continueAsGuest }}>
+    <AuthContext.Provider value={{ user, session, isGuest, userName, userPhone, signUp, signIn, signOut, continueAsGuest, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );
