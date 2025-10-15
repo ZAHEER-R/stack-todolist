@@ -69,6 +69,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
       setUserName(session?.user?.user_metadata?.name ?? null);
       setUserPhone(session?.user?.user_metadata?.phone ?? null);
+      if (session?.user) {
+        setIsGuest(false);
+        localStorage.removeItem('guestMode');
+      }
     });
 
     return () => subscription.unsubscribe();
