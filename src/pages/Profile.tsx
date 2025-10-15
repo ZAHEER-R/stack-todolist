@@ -3,18 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { ArrowLeft, User } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { ArrowLeft, User, Camera } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 
 const Profile = () => {
   const { user, userName, userPhone } = useAuth();
   const navigate = useNavigate();
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
+  const [profilePhoto, setProfilePhoto] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -22,52 +19,27 @@ const Profile = () => {
     }
   }, [user, navigate]);
 
-  const handleSendOTP = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: phone,
-      });
-
-      if (error) {
-        toast.error(error.message);
-      } else {
-        setOtpSent(true);
-        toast.success('OTP sent to your phone number!');
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size should be less than 5MB');
+        return;
       }
-    } catch (error) {
-      toast.error('Failed to send OTP. Please try again.');
-    } finally {
-      setLoading(false);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePhoto(reader.result as string);
+        toast.success('Profile photo updated!');
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleVerifyOTP = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const { error } = await supabase.auth.verifyOtp({
-        phone: phone,
-        token: otp,
-        type: 'sms',
-      });
-
-      if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success('Phone number verified successfully!');
-        setOtpSent(false);
-        setPhone('');
-        setOtp('');
-      }
-    } catch (error) {
-      toast.error('Failed to verify OTP. Please try again.');
-    } finally {
-      setLoading(false);
+  const getInitials = () => {
+    if (userName) {
+      return userName.split(' ').map(n => n[0]).join('').toUpperCase();
     }
+    return user?.email?.[0].toUpperCase() || 'U';
   };
 
   return (
@@ -95,6 +67,31 @@ const Profile = () => {
             </div>
 
             <div className="space-y-6">
+              <div className="flex flex-col items-center gap-4 pb-6 border-b">
+                <div className="relative">
+                  <Avatar className="h-32 w-32">
+                    <AvatarImage src={profilePhoto} alt={userName || 'User'} />
+                    <AvatarFallback className="text-3xl bg-primary/10 text-primary">
+                      {getInitials()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <label 
+                    htmlFor="photo-upload" 
+                    className="absolute bottom-0 right-0 p-2 bg-primary rounded-full cursor-pointer hover:bg-primary/90 transition-colors"
+                  >
+                    <Camera className="h-5 w-5 text-primary-foreground" />
+                    <input
+                      id="photo-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                <p className="text-sm text-muted-foreground">Click the camera icon to update your photo</p>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium mb-2">Name</label>
                 <Input
@@ -115,88 +112,17 @@ const Profile = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Current Phone Number
-                </label>
-                <Input
-                  type="tel"
-                  value={userPhone || 'Not added yet'}
-                  disabled
-                  className="bg-muted"
-                />
-              </div>
-
-              <div className="border-t pt-6">
-                <h2 className="text-xl font-semibold mb-4">
-                  {userPhone ? 'Update Phone Number' : 'Add Phone Number'}
-                </h2>
-                
-                {!otpSent ? (
-                  <form onSubmit={handleSendOTP} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        New Phone Number
-                      </label>
-                      <Input
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="+1234567890"
-                        required
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Include country code (e.g., +1 for US)
-                      </p>
-                    </div>
-
-                    <Button type="submit" disabled={loading}>
-                      {loading ? 'Sending...' : 'Send OTP'}
-                    </Button>
-                  </form>
-                ) : (
-                  <form onSubmit={handleVerifyOTP} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Enter OTP
-                      </label>
-                      <InputOTP
-                        maxLength={6}
-                        value={otp}
-                        onChange={(value) => setOtp(value)}
-                      >
-                        <InputOTPGroup>
-                          <InputOTPSlot index={0} />
-                          <InputOTPSlot index={1} />
-                          <InputOTPSlot index={2} />
-                          <InputOTPSlot index={3} />
-                          <InputOTPSlot index={4} />
-                          <InputOTPSlot index={5} />
-                        </InputOTPGroup>
-                      </InputOTP>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Enter the 6-digit code sent to {phone}
-                      </p>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Button type="submit" disabled={loading || otp.length !== 6}>
-                        {loading ? 'Verifying...' : 'Verify OTP'}
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => {
-                          setOtpSent(false);
-                          setOtp('');
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </form>
-                )}
-              </div>
+              {userPhone && (
+                <div>
+                  <label className="block text-sm font-medium mb-2">Phone Number</label>
+                  <Input
+                    type="tel"
+                    value={userPhone}
+                    disabled
+                    className="bg-muted"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
