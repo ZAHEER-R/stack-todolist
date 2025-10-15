@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { ArrowLeft, User, Camera } from 'lucide-react';
+import { ArrowLeft, User, Camera, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
+import { useEffect } from 'react';
 
 const Profile = () => {
-  const { user, userName, userPhone, profilePhoto, setProfilePhoto } = useAuth();
+  const { user, userName, userPhone, profilePhoto, setProfilePhoto, signOut } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -121,6 +121,21 @@ const Profile = () => {
                   />
                 </div>
               )}
+              
+              <div className="border-t pt-6">
+                <Button 
+                  variant="destructive" 
+                  className="w-full"
+                  onClick={async () => {
+                    await signOut();
+                    toast.success('Signed out successfully');
+                    navigate('/auth');
+                  }}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              </div>
             </div>
           </div>
         </div>
