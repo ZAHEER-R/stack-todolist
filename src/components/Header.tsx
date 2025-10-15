@@ -1,6 +1,7 @@
 import { Layers, Moon, Sun, Smartphone, User, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   taskCount: number;
@@ -13,6 +14,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ taskCount, theme, onThemeChange, userEmail, userName, userPhone }) => {
   const [showAccountInfo, setShowAccountInfo] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-md border-b border-border">
@@ -93,11 +95,22 @@ export const Header: React.FC<HeaderProps> = ({ taskCount, theme, onThemeChange,
                       </div>
                     )}
                     {userPhone && (
-                      <div>
+                      <div className="mb-2">
                         <span className="text-xs text-muted-foreground">Phone</span>
                         <p className="text-sm font-medium">{userPhone}</p>
                       </div>
                     )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full mt-3"
+                      onClick={() => {
+                        navigate('/profile');
+                        setShowAccountInfo(false);
+                      }}
+                    >
+                      Manage Profile
+                    </Button>
                   </div>
                 )}
               </div>
