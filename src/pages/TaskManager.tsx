@@ -24,6 +24,7 @@ const TaskManager = () => {
   const [alert, setAlert] = useState<{ message: string; isVictory?: boolean } | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [theme, setTheme] = useState<'light' | 'dark' | 'mobile'>('light');
+  const [operationCount, setOperationCount] = useState(0);
 
   useEffect(() => {
     if (!user && !isGuest) {
@@ -123,6 +124,7 @@ const TaskManager = () => {
     
     setUndoStack([...undoStack, { type: 'push', task: newTask }]);
     setRedoStack([]);
+    setOperationCount(prev => prev + 1);
   };
 
   const handlePop = async () => {
@@ -144,6 +146,7 @@ const TaskManager = () => {
     showAlert(`Task "${removedTask.title}" removed from stack.`);
     setUndoStack([...undoStack, { type: 'pop', task: removedTask }]);
     setRedoStack([]);
+    setOperationCount(prev => prev + 1);
   };
 
   const handlePeek = () => {
@@ -154,6 +157,7 @@ const TaskManager = () => {
 
     playSound('peek');
     showAlert(`Current task: "${tasks[0].title}"`);
+    setOperationCount(prev => prev + 1);
   };
 
   const handleUndo = async () => {
@@ -177,6 +181,7 @@ const TaskManager = () => {
 
     playSound('undo');
     showAlert('Operation undone.');
+    setOperationCount(prev => prev + 1);
   };
 
   const handleRedo = async () => {
@@ -200,11 +205,13 @@ const TaskManager = () => {
 
     playSound('redo');
     showAlert('Operation redone.');
+    setOperationCount(prev => prev + 1);
   };
 
   const handleIterate = () => {
     playSound('iterate');
     showAlert(`Viewing all ${tasks.length} tasks in stack (top to bottom).`);
+    setOperationCount(prev => prev + 1);
   };
 
   const handleClear = async () => {
@@ -216,6 +223,7 @@ const TaskManager = () => {
     setRedoStack([]);
     playSound('clear');
     showAlert('All tasks cleared from stack.');
+    setOperationCount(prev => prev + 1);
   };
 
   const handleComplete = async (id: string) => {
@@ -231,6 +239,7 @@ const TaskManager = () => {
     
     playSound('complete');
     showAlert(`Task "${task.title}" completed.`);
+    setOperationCount(prev => prev + 1);
 
     if (newTasks.length === 0) {
       setTimeout(() => {
@@ -249,6 +258,7 @@ const TaskManager = () => {
     await saveTasks(newTasks);
     playSound('pop');
     showAlert(`${ids.length} task(s) deleted.`);
+    setOperationCount(prev => prev + 1);
   };
 
   const handleSignOut = async () => {
@@ -302,6 +312,19 @@ const TaskManager = () => {
               placeholder="Search tasks..."
               className="pl-10"
             />
+          </div>
+        </div>
+
+        <div className="mb-4 p-4 bg-card rounded-lg border border-border flex justify-between items-center">
+          <div className="flex gap-6">
+            <div className="text-sm">
+              <span className="text-muted-foreground">Total Tasks: </span>
+              <span className="font-semibold text-foreground">{tasks.length}</span>
+            </div>
+            <div className="text-sm">
+              <span className="text-muted-foreground">Stack Operations: </span>
+              <span className="font-semibold text-foreground">{operationCount}</span>
+            </div>
           </div>
         </div>
 

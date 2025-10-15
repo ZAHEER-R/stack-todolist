@@ -1,3 +1,4 @@
+import React from 'react';
 import { X } from 'lucide-react';
 import { Button } from './ui/button';
 
@@ -8,6 +9,14 @@ interface AlertProps {
 }
 
 export const Alert: React.FC<AlertProps> = ({ message, onClose, isVictory }) => {
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className={`bg-card p-6 rounded-lg shadow-2xl max-w-md w-full mx-4 border-2 ${isVictory ? 'border-success' : 'border-primary'} glow-soft`}>
