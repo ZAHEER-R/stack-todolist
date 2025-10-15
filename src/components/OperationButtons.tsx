@@ -25,13 +25,13 @@ export const OperationButtons: React.FC<OperationButtonsProps> = ({
   canRedo,
 }) => {
   const operations = [
-    { icon: Plus, label: 'Push', subtext: 'add', onClick: onPush, color: '#E8F5E9' },
-    { icon: Trash2, label: 'Pop', subtext: 'remove', onClick: onPop, color: '#FFEBEE' },
-    { icon: Eye, label: 'Peek', subtext: 'current', onClick: onPeek, color: '#E3F2FD' },
-    { icon: Undo2, label: 'Undo', subtext: 'operation', onClick: onUndo, color: '#FFF3E0', disabled: !canUndo },
-    { icon: Redo2, label: 'Redo', subtext: 'operation', onClick: onRedo, color: '#F3E5F5', disabled: !canRedo },
-    { icon: List, label: 'Iterate', subtext: 'view all', onClick: onIterate, color: '#E0F2F1' },
-    { icon: RotateCcw, label: 'Reset', subtext: 'clear', onClick: onClear, color: '#FFF9C4' },
+    { icon: Plus, label: 'Push', subtext: 'add', onClick: onPush, color: '#C8E6C9' },
+    { icon: Trash2, label: 'Pop', subtext: 'remove', onClick: onPop, color: '#FFCDD2' },
+    { icon: Eye, label: 'Peek', subtext: 'current', onClick: onPeek, color: '#BBDEFB' },
+    { icon: Undo2, label: 'Undo', subtext: 'operation', onClick: onUndo, color: '#FFE0B2', disabled: !canUndo },
+    { icon: Redo2, label: 'Redo', subtext: 'operation', onClick: onRedo, color: '#E1BEE7', disabled: !canRedo },
+    { icon: List, label: 'Iterate', subtext: 'view all', onClick: onIterate, color: '#B2DFDB' },
+    { icon: RotateCcw, label: 'Reset', subtext: 'clear', onClick: onClear, color: '#FFF59D' },
   ];
 
   return (
@@ -49,9 +49,9 @@ export const OperationButtons: React.FC<OperationButtonsProps> = ({
               opacity: op.disabled ? 0.5 : 1,
             }}
           >
-            <Icon className="h-6 w-6 md:h-7 md:w-7 text-gray-800 dark:text-white" />
-            <span className="text-sm font-semibold text-gray-800 dark:text-white">{op.label}</span>
-            <span className="text-xs text-gray-600 dark:text-gray-300">{op.subtext}</span>
+            <Icon className="h-6 w-6 md:h-7 md:w-7 text-gray-900 dark:text-gray-900" />
+            <span className="text-sm font-semibold text-gray-900 dark:text-gray-900">{op.label}</span>
+            <span className="text-xs text-gray-700 dark:text-gray-800">{op.subtext}</span>
           </Button>
         );
       })}
