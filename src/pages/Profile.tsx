@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { useEffect } from 'react';
 
 const Profile = () => {
-  const { user, userName, userPhone, profilePhoto, setProfilePhoto, signOut } = useAuth();
+  const { user, userName, userPhone, profilePhoto, updateProfilePhoto, signOut } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const Profile = () => {
       }
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfilePhoto(reader.result as string);
+        updateProfilePhoto(reader.result as string);
         toast.success('Profile photo updated!');
       };
       reader.readAsDataURL(file);

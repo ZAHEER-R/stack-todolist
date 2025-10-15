@@ -10,6 +10,7 @@ interface AuthContextType {
   userPhone: string | null;
   profilePhoto: string;
   setProfilePhoto: (photo: string) => void;
+  updateProfilePhoto: (photo: string) => void;
   signUp: (email: string, password: string, name: string, phone: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -36,6 +37,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profilePhoto, setProfilePhoto] = useState<string>('');
 
   useEffect(() => {
+    // Load profile photo from localStorage
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+      setProfilePhoto(savedPhoto);
+    }
+
     // Check if user is in guest mode
     const guestMode = localStorage.getItem('guestMode');
     if (guestMode === 'true') {
@@ -95,6 +102,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await supabase.auth.signOut();
     setIsGuest(false);
     localStorage.removeItem('guestMode');
+    localStorage.removeItem('profilePhoto');
+    setProfilePhoto('');
   };
 
   const continueAsGuest = () => {
@@ -110,8 +119,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
+  const updateProfilePhoto = (photo: string) => {
+    setProfilePhoto(photo);
+    localStorage.setItem('profilePhoto', photo);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, session, isGuest, userName, userPhone, profilePhoto, setProfilePhoto, signUp, signIn, signOut, continueAsGuest, resetPassword }}>
+    <AuthContext.Provider value={{ user, session, isGuest, userName, userPhone, profilePhoto, setProfilePhoto, updateProfilePhoto, signUp, signIn, signOut, continueAsGuest, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );
